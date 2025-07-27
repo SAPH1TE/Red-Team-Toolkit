@@ -1,0 +1,13 @@
+# Touch this and you better know what you're doing, for someone with such a flammable house.
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+RESET="\e[0m"
+BOLD="\e[1;37m"
+CREDITS_FILE="etc/credits.txt"
+HELP_FILE="etc/help.txt"
+LOGFILE="etc/log.txt"
+MENUSYSTEM="core/menusystem.sh"
