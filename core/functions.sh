@@ -17,6 +17,26 @@ check_dependencies() {
   return 0
 }
 
+check_py_modules() {
+  local missing=()
+
+  for pkg in "$@"; do
+    if ! python3 -c "import $pkg" &>/dev/null; then
+      missing+=("$pkg")
+    fi
+  done
+
+  if [ ${#missing[@]} -ne 0 ]; then
+    echo -e "${RED}Missing required Python packages:${RESET}"
+    for pkg in "${missing[@]}"; do
+      echo -e " - ${YELLOW}${pkg}${RESET}"
+    done
+    return 1
+  fi
+  return 0
+}
+
+
 timestamp() {
   date '+%Y-%m-%d %H:%M:%S'
 }
@@ -29,7 +49,7 @@ pause_and_return() {
 
 PrintAsciiColored() {
   echo -e "${BOLD}${YELLOW}$1${RESET}"
-  sleep 0.1
+  sleep 0.01
 }
 
 echored() {
@@ -49,13 +69,14 @@ print_ascii() {
   PrintAsciiColored "   \  \:\/:/     \  \:\/:/      \  \::/      \  \:\/:/     \  \:\/:/     \  \:\        \  \:\/:/   "
   PrintAsciiColored "    \  \::/       \  \::/        \__\/        \  \::/       \  \::/       \  \:\        \  \::/    "
   PrintAsciiColored "     \__\/         \__\/                       \__\/         \__\/         \__\/         \__\/     "
-  sleep 1
+  sleep 0.75
   clear
   echored           "╔═════════════════════════════════════════════════════════════════════════════════════════════════╗"
   echored           "║          ONLY RUN THIS IF YOU KNOW WHAT YOU ARE DOING! USE THIS ON TARGETS WITH CONSENT         ║ "
   echored           "║                    ONLY DO THIS WITHIN SAFE AND ETHICAL CONFINMENTS                             ║"
   echored           "╚═════════════════════════════════════════════════════════════════════════════════════════════════╝"
   echo -e    "${CYAN} Please note this tool has been designed for debian based systems such as kali, parrot, mint, ect  ${RESET}"
+  echo " "
   read -rp "Press enter to continue..."
   clear
 }

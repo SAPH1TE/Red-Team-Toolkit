@@ -1,23 +1,26 @@
-Works refrenced or used within this project:
-------------------------------------
-airgeddon
-recon-ng
-recondog
-intercepter-ng
-wireshark
-aircrackng
-scapy
-nmap
--------------------------------------
-authors:
-saph1te
-uhhh gpt
+Authors
+ saph1te
 
-yeah i know im lonley, get over it
-unless your going to contribute, it's
-just me myself and i
+Contributors
+- I would like to welcome and acknowledge all future contributors.
 
 -------------------------------------
-Also a huge shoutout to any of the other
-contributors and authors on github making this 
-possible!
+
+Acknowledgments & Referenced Works
+
+I would like to acknowledge the 
+incredible work of the open source security community and the developers of the following tools, 
+which have served as inspiration or are used within this toolkit:
+
+- Nmap Security Scanner
+- John the Ripper
+- Aircrack-ng
+- Scapy
+- Wireshark
+- Recon-ng
+- Bettercap
+- Hydra
+- Metasploit Framework (for msfvenom)
+
+Also a huge thank you to all the authors and maintainers on GitHub and beyond 
+who make projects like this possible through their dedication to FOSS media.

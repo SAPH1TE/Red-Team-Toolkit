@@ -10,18 +10,22 @@ trap "echo -e '\n${RED}Interrupted. Logging and exiting.${RESET}'; echo \"$(date
 menu() { 
     while true; do 
         clear 
-        echo -e "╔════════════════════════════════╗" 
-        echo -e "║             ${CYAN}${BOLD}HOME${RESET}               ║" 
-        echo -e "╠════════════════════════════════╣" 
-        echo -e "║ 1) ${MAGENTA}Main Toolbox${RESET}                ║" 
-        echo -e "║ 2) ${MAGENTA}Credits${RESET}                     ║" 
-        echo -e "║ 3) ${MAGENTA}Help${RESET}                        ║" 
-        echo -e "╠════════════════════════════════╣" 
-        echo -e "║ b) ${RED}Exit${RESET}                        ║" 
-        echo -e "╚════════════════════════════════╝" 
-        read -rp "Choose (1-4): " choice 
-
+        echo -e "╔══════════════════════════════════════════════════╗" 
+        echo -e "║                      ${BOLD}HOME${RESET}                        ║" 
+        echo -e "╠══════════════════════════════════════════════════╣" 
+        echo -e "║ 1) ${MAGENTA}Main Toolbox${RESET}                                  ║" 
+        echo -e "║ 2) ${MAGENTA}Credits${RESET}                                       ║" 
+        echo -e "║ 3) ${MAGENTA}Help${RESET}                                          ║" 
+        echo -e "╠══════════════════════════════════════════════════╣" 
+        echo -e "║ b) ${RED}Exit${RESET}                                          ║" 
+        echo -e "╚══════════════════════════════════════════════════╝" 
+        read -rp "Choose: " choice  
         echo "$(date '+%Y-%m-%d %H:%M:%S') - User selected option: $choice" >> "$LOGFILE" 
+        if [[ -z "$choice" ]]; then
+            echo "[!] Error: No option entered. Please try again."
+            sleep 1 
+            continue 
+        fi
 
         case $choice in 
             1) toolbox ;; 
@@ -45,17 +49,17 @@ menu() {
 toolbox() { 
     while true; do 
         echo "$(date '+%Y-%m-%d %H:%M:%S') - User entered toolbox" >> "$LOGFILE" 
-        clear 
+        clear
         echo -e "╔══════════════════════════════════════════════════╗" 
         echo -e "║              ${RED}RED${RESET} TEAM TOOLBOX                    ║" 
         echo -e "╠══════════════════════════════════════════════════╣" 
-        echo -e "║  1) ${GREEN}Nmap Scanning${RESET}                                ║" 
-        echo -e "║  2) ${YELLOW}Connect To A Proxy${RESET}                           ║" 
-        echo -e "║  3) ${GREEN}ARP poisioning${RESET}                               ║" 
+        echo -e "║  1) ${YELLOW}Nmap Scanning${RESET}                                ║" 
+        echo -e "║  2) ${RED}Connect To A Proxy${RESET}                           ║" 
+        echo -e "║  3) ${YELLOW}ARP poisoning${RESET}                                ║" 
         echo -e "║  4) ${YELLOW}Hash Cracking${RESET}                                ║" 
-        echo -e "║  5)                                              ║" 
-        echo -e "║  6)                                              ║" 
-        echo -e "║  7)                                              ║" 
+        echo -e "║  5) ${YELLOW}Dos Attack Emulation${RESET}                         ║" 
+        echo -e "║  6) ${YELLOW}SSH Brute Force${RESET}                              ║" 
+        echo -e "║  7) ${RED}Subdomain enumeration${RESET}                        ║" 
         echo -e "║  8)                                              ║" 
         echo -e "║  9)                                              ║" 
         echo -e "║ 10)                                              ║" 
@@ -77,20 +81,22 @@ toolbox() {
         echo -e "╠══════════════════════════════════════════════════╣" 
         echo -e "║ b) ${RED}Back${RESET}                                          ║" 
         echo -e "╚══════════════════════════════════════════════════╝" 
-        echo -e "${RED}YELLOW MAY INDICATE THAT THIS FEATURE IS NOT ${RESET}" 
-        echo -e "${RED}FULLY IMPLEMENTED YET BUT IN DEVELOPMENT${RESET}" 
-        read -rp "Choose (1-4): " choice 
-
+        read -rp "Choose: " choice 
         echo "$(date '+%Y-%m-%d %H:%M:%S') - User selected toolbox option: $choice" >> "$LOGFILE" 
+        if [[ -z "$choice" ]]; then
+            echo "[!] Error: No option entered. Please try again."
+            sleep 1 
+            continue 
+        fi
 
         case $choice in 
             1) nmapscan ;; 
             2) proxyconnect ;; 
-            3) arppoison;; 
+            3) arppoisoning;; 
             4) passwordcrack;; 
-            5) ;; 
-            6) ;;  
-            7) ;; 
+            5) dosattack;; 
+            6) sshbrute;;  
+            7) subdomainenum;; 
             8) ;; 
             9) ;; 
             10) ;; 
@@ -123,10 +129,11 @@ toolbox() {
 credits() { 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - User viewed credits" >> "$LOGFILE" 
     clear 
-    echo -e "╔════════════════════════════════╗" 
-    echo -e "║             ${BOLD}CREDITS${RESET}            ║" 
-    echo -e "╚════════════════════════════════╝" 
+    echo -e "╔══════════════════════════════════════════════════╗" 
+    echo -e "║                    ${BOLD}CREDITS${RESET}                       ║" 
+    echo -e "╚══════════════════════════════════════════════════╝" 
     cat "$CREDITS_FILE" 
+    echo "\n"
     read -rp "Press enter key to go back..." 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - User returned from credits" >> "$LOGFILE" 
 } 
@@ -135,19 +142,23 @@ credits() {
 help() { 
     while true; do 
         clear 
-        echo -e "╔════════════════════════════════╗" 
-        echo -e "║              ${BOLD}HELP${RESET}              ║" 
-        echo -e "╠════════════════════════════════╣" 
-        echo -e "║ 1) ${MAGENTA}Clear log.txt${RESET}               ║" 
-        echo -e "║ 2) ${MAGENTA}View Version${RESET}                ║" 
-        echo -e "║ 3) ${MAGENTA}How to navigate${RESET}             ║" 
-        echo -e "║ 4) ${MAGENTA}How to Contribute${RESET}           ║" 
-        echo -e "╠════════════════════════════════╣" 
-        echo -e "║ b) ${RED}back${RESET}                        ║" 
-        echo -e "╚════════════════════════════════╝" 
-        read -rp "Choose (1-5): " choice 
-
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - User selected option: $choice" >> "$LOGFILE" 
+        echo -e "╔══════════════════════════════════════════════════╗" 
+        echo -e "║                      ${BOLD}HELP${RESET}                        ║" 
+        echo -e "╠══════════════════════════════════════════════════╣" 
+        echo -e "║ 1) ${MAGENTA}Clear log.txt${RESET}                                 ║" 
+        echo -e "║ 2) ${MAGENTA}View Version${RESET}                                  ║" 
+        echo -e "║ 3) ${MAGENTA}How to navigate${RESET}                               ║" 
+        echo -e "║ 4) ${MAGENTA}About${RESET}                                         ║" 
+        echo -e "╠══════════════════════════════════════════════════╣" 
+        echo -e "║ b) ${RED}back${RESET}                                          ║" 
+        echo -e "╚══════════════════════════════════════════════════╝" 
+        read -rp "Choose: " choice 
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - User selected option: $choice" >> "$LOGFILE"
+        if [[ -z "$choice" ]]; then
+            echo "[!] Error: No option entered. Please try again."
+            sleep 1 
+            continue 
+        fi 
 
         case $choice in 
             1) clearlog ;; 
@@ -170,44 +181,43 @@ help() {
 version() { 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - User viewed version info" >> "$LOGFILE" 
     clear 
-    echo -e "╔════════════════════════════════╗" 
-    echo -e "║            ${BOLD}VERSION${RESET}             ║" 
-    echo -e "╠════════════════════════════════╣" 
-    echo -e "║ ${MAGENTA}Version: 1.0${RESET}                   ║" 
-    echo -e "║ ${MAGENTA}Release Type: ${RELEASETYPE}${RESET}          ║" 
-    echo -e "╚════════════════════════════════╝" 
+    echo -e "╔══════════════════════════════════════════════════╗" 
+    echo -e "║                    ${BOLD}VERSION${RESET}                       ║" 
+    echo -e "╠══════════════════════════════════════════════════╣" 
+    echo -e "║ ${MAGENTA}Version:${VERSION}${RESET}                              ║" 
+    echo -e "║ ${MAGENTA}Release Type: ${VERSION} ${RELEASETYPE}${RESET}                   ║" 
+    echo -e "╚══════════════════════════════════════════════════╝" 
     pause_and_return 
 } 
 
 navigate() { 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - User viewed navigation help" >> "$LOGFILE" 
     clear 
-    echo -e "╔════════════════════════════════╗" 
-    echo -e "║         ${BOLD}HOW TO NAVIGATE${RESET}        ║" 
-    echo -e "╠════════════════════════════════╣" 
-    echo -e "║ -  Use ctrl+c to force quit    ║" 
-    echo -e "║ - Type the number or letter of ║" 
-    echo -e "║   the menu option you want.    ║" 
-    echo -e "║ - Press 'Enter' to select.     ║" 
-    echo -e "║ -    Use 'b' to return         ║" 
-    echo -e "║   to the previous menu.        ║" 
-    echo -e "║                                ║" 
-    echo -e "╚════════════════════════════════╝" 
+    echo -e "╔══════════════════════════════════════════════════╗" 
+    echo -e "║                  ${BOLD}NAVIGATION${RESET}                      ║" 
+    echo -e "╠══════════════════════════════════════════════════╣"  
+    echo -e "║ - ${MAGENTA}Use ctrl+c to force quit${RESET}                       ║" 
+    echo -e "║ - ${MAGENTA}Type the number or letter of the menu option${RESET}   ║" 
+    echo -e "║   ${MAGENTA}you want.${RESET}                                      ║"
+    echo -e "║                                                  ║" 
+    echo -e "║ - ${MAGENTA}Press 'Enter' to select.${RESET}                       ║" 
+    echo -e "║ - ${MAGENTA}Use 'b' to return to the previous menu.${RESET}        ║" 
+    echo -e "╚══════════════════════════════════════════════════╝" 
     pause_and_return 
 } 
 
 contribute() { 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - User viewed contribution help" >> "$LOGFILE" 
     clear 
-    echo -e "╔════════════════════════════════╗" 
-    echo -e "║       ${bold}HOW TO CONTRIBUTE${normal}        ║" 
-    echo -e "╠════════════════════════════════╣" 
-    echo -e "║                                ║" 
-    echo -e "║ This project is a ${RELEASETYPE}      ║" 
-    echo -e "║ release and is not currently   ║" 
-    echo -e "║ accepting public contributions.║" 
-    echo -e "║                                ║" 
-    echo -e "╚════════════════════════════════╝" 
+    echo -e "╔══════════════════════════════════════════════════╗" 
+    echo -e "║                    ${BOLD}ABOUT${RESET}                         ║" 
+    echo -e "╠══════════════════════════════════════════════════╣" 
+    echo -e "║ ${MAGENTA}It is advised to learn more about this through${RESET}   ║"
+    echo -e "║ ${MAGENTA}The readme.md file that can be found on github${RESET}   ║"
+    echo -e "║ ${MAGENTA}This project is publicly developed and accepting${RESET} ║" 
+    echo -e "║ ${MAGENTA}contributions. Although it is currently in a${RESET}     ║" 
+    echo -e "║ ${MAGENTA}alpha development phase so expect issues.${RESET}        ║" 
+    echo -e "╚══════════════════════════════════════════════════╝" 
     pause_and_return 
 } 
 

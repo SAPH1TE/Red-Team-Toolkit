@@ -1,6 +1,9 @@
-import sys
+# modules/passwordcracker.py
+
 import os
+import argparse
 import subprocess
+import sys
 
 def display_banner():
     """Displays a banner for the module."""
@@ -17,68 +20,93 @@ def crack_passwords(hash_file, wordlist=None, hash_format=None):
         print(f"[!] Error: Hash file not found at '{hash_file}'")
         return
 
-    command = ['john']
-    
-    if wordlist:
-        if not os.path.exists(wordlist):
-            print(f"[!] Error: Wordlist not found at '{wordlist}'")
+    # Add an ethical warning.
+    print("[!] LEGAL & ETHICAL WARNING:")
+    print("[!] Cracking passwords without proper authorization is illegal.")
+    print("[!] Ensure you have explicit permission to test the target hashes.\n")
+
+    # --- IMPROVED SESSION AWARENESS BLOCK ---
+    rec_file = "john.rec"
+    command = []  # Initialize command list
+
+    if os.path.exists(rec_file):
+        print(f"[*] An existing session file ('{rec_file}') was found.")
+        resume_choice = input("Do you want to [r]esume the last session or [s]tart a new one? (r/s): ").lower().strip()
+        
+        if resume_choice == 'r':
+            print("[*] Attempting to resume session...")
+            command = ['john', '--restore']
+        elif resume_choice == 's':
+            print("[*] A new session will be started. The old 'john.rec' will be ignored for this run.")
+            # By doing nothing here, we let the logic below build a new command.
+            pass
+        else:
+            print("[!] Invalid choice. Aborting.")
             return
-        command.append(f"--wordlist={wordlist}")
-        print(f"[*] Starting attack on {hash_file} with wordlist: {wordlist}")
-    else:
-        print(f"[*] Starting attack on {hash_file} using John's default modes.")
 
-    if hash_format:
-        command.append(f"--format={hash_format}")
-        print(f"[*] Using hash format: {hash_format}")
+    # This block now runs if it's the very first session OR if the user chose 's' to start a new one.
+    if not command:
+        command = ['john']
+        if wordlist:
+            if not os.path.exists(wordlist):
+                print(f"[!] Error: Wordlist not found at '{wordlist}'")
+                return
+            command.append(f"--wordlist={wordlist}")
+        else:
+            print("[*] No wordlist specified. John will use its default cracking modes (brute-force, etc.).")
+        
+        if hash_format:
+            command.append(f"--format={hash_format}")
+        
+        command.append(hash_file)
 
-    command.append(hash_file)
+    print(f"\n[*] Preparing to run command: {' '.join(command)}")
 
     try:
-        print(f"[*] Running command: {' '.join(command)}")
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        print("[*] John the Ripper is running. Output will be displayed below:")
+        print("-" * 50)
         
-        while True:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                print(output.strip())
+        for line in iter(process.stdout.readline, ''):
+            print(line.strip())
         
+        process.wait()
         rc = process.poll()
-        if rc == 0:
-            print("\n[*] Cracking process completed. Showing cracked passwords:")
-            subprocess.run(['john', '--show', hash_file])
-        else:
-             print(f"\n[!] John the Ripper exited with an error (code {rc}).")
-             print("[!] Ensure the hash file format is correct or try specifying a format.")
+        print("-" * 50)
+        
+        # After the process finishes, always run --show to display cracked passwords.
+        print("\n[*] Cracking process finished. Displaying cracked passwords:")
+        subprocess.run(['john', '--show', hash_file])
+
+        if rc != 0:
+             print(f"\n[!] John the Ripper may have exited with an error (code {rc}).")
+             print("[!] Common issues: incorrect hash format, corrupted session file, or no passwords cracked in the current mode.")
+             print("[!] Try specifying the format explicitly with '--format=<format>'.")
 
     except FileNotFoundError:
         print("\n[!] Error: 'john' command not found.")
         print("[!] Please ensure John the Ripper is installed and in your system's PATH.")
+        print("[!] On Debian/Ubuntu, use: sudo apt install john")
     except Exception as e:
         print(f"\n[!] An unexpected error occurred: {e}")
 
-if __name__ == "__main__":
+def main():
     display_banner()
-    if len(sys.argv) < 2:
-        print("Usage: python password_cracker.py <hash_file> [wordlist_file] [--format=hash_format]")
-        print("Example: python password_cracker.py hashes.txt wordlist.txt --format=raw-md5")
+    parser = argparse.ArgumentParser(
+        description="A wrapper for John the Ripper to simplify password cracking.",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("hash_file", help="Path to the file containing password hashes.")
+    parser.add_argument("-w", "--wordlist", help="Optional: Path to a wordlist file.", required=False)
+    parser.add_argument("-f", "--format", help="Optional: Specify the hash format (e.g., raw-md5, nt, sha256crypt).", required=False)
+    
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
         sys.exit(1)
 
-    hash_file_path = sys.argv[1]
-    wordlist_path = None
-    hash_format_arg = None
+    args = parser.parse_args()
 
-    # Simple argument parsing
-    if len(sys.argv) > 2:
-        if "format" in sys.argv[2]:
-             hash_format_arg = sys.argv[2].split("=")[1]
-        else:
-             wordlist_path = sys.argv[2]
-    
-    if len(sys.argv) > 3:
-        if "format" in sys.argv[3]:
-            hash_format_arg = sys.argv[3].split("=")[1]
+    crack_passwords(args.hash_file, args.wordlist, args.format)
 
-    crack_passwords(hash_file_path, wordlist_path, hash_format_arg)
+if __name__ == "__main__":
+    main()
