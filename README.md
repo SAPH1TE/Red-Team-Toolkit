@@ -1,4 +1,4 @@
-# Red Teaming Toolkit
+# Red Teaming Toolkit THIS PROJECT IS CURRENTY BEING MADE PRIVATELY AND PUBLIC SNAPSHOTS WILL BE NO LONGER PUSHED UNLESS IF A FINAL EDITION IS RELEASED
 
 **I cannot express enough that this project is within VERY early development As i am uploading mid dev snapshots before the main version 1 release**
 
